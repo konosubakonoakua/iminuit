@@ -2425,8 +2425,8 @@ class Minuit:
                     # NOTE: min, max is acctually base**min, base**max
                     self.slider = FloatLogSlider(
                         val,
-                        min=int(np.log10(min))-1,
-                        max=int(np.log10(max))+1,
+                        min=int(np.log10(min)),
+                        max=int(np.log10(max)),
                         step=step,
                         description=par,
                         continuous_update=True,
