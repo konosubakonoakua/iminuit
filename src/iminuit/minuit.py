@@ -2430,8 +2430,8 @@ class Minuit:
                         step=step,
                         description=par,
                         continuous_update=True,
-                        layout=Layout(min_width="70%"),
                         readout_format=".4e",
+                        layout=Layout(min_width="80%"),
                     )
                     self.fix = ToggleButton(
                         fix, description="Fix", layout=Layout(width="3.1em")
@@ -2545,8 +2545,10 @@ class Minuit:
                     VBox(parameters),
                 ]
             )
+            ui.layout = Layout(min_width="60%")
 
             out = Output()
+            out.layout = Layout(min_width="35%")
             out.block = False
 
             for x in parameters:
