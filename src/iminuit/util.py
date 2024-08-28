@@ -1405,6 +1405,10 @@ def _get_limit(
 def _guess_initial_step(val: float) -> float:
     return 1e-2 * abs(val) if val != 0 else 1e-1  # heuristic
 
+# TODO: need better way, for now, just 1000 points per exponent
+def _guess_initial_step_log_exponent(val: float, base: float=10, factor: float=0.001) -> float:
+    return factor
+    # return 1 / base if val == 0 else factor * val
 
 def _key2index_from_slice(var2pos: Dict[str, int], key: slice) -> List[int]:
     start = var2pos[key.start] if isinstance(key.start, str) else key.start

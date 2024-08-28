@@ -2356,6 +2356,7 @@ class Minuit:
                     VBox,
                     Output,
                     FloatSlider,
+                    FloatLogSlider,
                     Button,
                     ToggleButton,
                     Layout,
@@ -2421,14 +2422,16 @@ class Minuit:
             class ParameterBox(HBox):
                 def __init__(self, par, val, min, max, step, fix):
                     self.par = par
-                    self.slider = FloatSlider(
+                    # NOTE: min, max is acctually base**min, base**max
+                    self.slider = FloatLogSlider(
                         val,
-                        min=a,
-                        max=b,
+                        min=int(np.log10(min))-1,
+                        max=int(np.log10(max))+1,
                         step=step,
                         description=par,
                         continuous_update=True,
                         layout=Layout(min_width="70%"),
+                        readout_format=".4e",
                     )
                     self.fix = ToggleButton(
                         fix, description="Fix", layout=Layout(width="3.1em")
@@ -2488,10 +2491,12 @@ class Minuit:
                 out.block = True
                 for x in parameters:
                     val = self.values[x.par]
-                    if val < x.slider.min:
-                        x.slider.min = val
-                    elif val > x.slider.max:
-                        x.slider.max = val
+                    # BUG: min, max is the exponent, while val is base**exponent
+                    # so, we do not need this
+                    # if val < x.slider.min:
+                    #     x.slider.min = val
+                    # elif val > x.slider.max:
+                    #     x.slider.max = val
                     x.slider.value = val
                 out.block = False
                 with out:
@@ -2514,11 +2519,11 @@ class Minuit:
             parameters = []
             for par in self.parameters:
                 val = self.values[par]
-                step = mutil._guess_initial_step(val)
                 a, b = self.limits[par]
                 # safety margin to avoid overflow warnings
                 a = a + 1e-300 if np.isfinite(a) else val - 100 * step
                 b = b - 1e-300 if np.isfinite(b) else val + 100 * step
+                step = mutil._guess_initial_step_log_exponent(a)
                 parameters.append(ParameterBox(par, val, a, b, step, self.fixed[par]))
 
             fit_button = Button(description="Fit")
